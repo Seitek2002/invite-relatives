@@ -492,6 +492,15 @@
           </div>
         </div>
 
+        <sc-if value="{{ hasCompanion }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top: 24px; padding-top: 22px; border-top: 1px solid #efe8da;">
+          <label style="display: block; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: #8c8377; margin-bottom: 9px;">{{ companionFioLabel }}</label>
+          <input type="text" placeholder="{{ companionFioPlaceholder }}" value="{{ p2 }}" onchange="{{ setP2 }}" style="width: 100%; padding: 14px 15px; border: 1px solid #e3dccf; border-radius: 11px; background: #fff; font-family: 'Jost', sans-serif; font-size: 16px; color: #3d362e; outline: none;" style-focus="border-color: var(--accent, #b08d57);">
+          <label style="display: block; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: #8c8377; margin: 18px 0 9px;">{{ companionRoleLabel }}</label>
+          <input type="text" placeholder="{{ companionRolePlaceholder }}" value="{{ relation }}" onchange="{{ setRelation }}" style="width: 100%; padding: 14px 15px; border: 1px solid #e3dccf; border-radius: 11px; background: #fff; font-family: 'Jost', sans-serif; font-size: 16px; color: #3d362e; outline: none;" style-focus="border-color: var(--accent, #b08d57);">
+        </div>
+        </sc-if>
+
         <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}">
         <div style="margin-top: 18px; font-size: 13.5px; color: #b5604e; text-align: center;">{{ error }}</div>
         </sc-if>
@@ -587,6 +596,10 @@ const LANG = {
     noLabel: 'К сожалению, нет',
     isAttendingYes: 'Да, приду с радостью',
     isAttendingNo: 'К сожалению, нет',
+    companionFioLabel: 'ФИО спутника',
+    companionFioPlaceholder: 'Имя и фамилия',
+    companionRoleLabel: 'Кем приходится',
+    companionRolePlaceholder: 'Например, супруг(а)',
 
     errFio: 'Пожалуйста, укажите Ваше ФИО',
     errAttend: 'Пожалуйста, выберите вариант ответа',
@@ -647,6 +660,10 @@ const LANG = {
     noLabel: 'Тилекке каршы, жок',
     isAttendingYes: 'Ооба, кубаныч менен келем',
     isAttendingNo: 'Тилекке каршы, жок',
+    companionFioLabel: 'Коштоочунун аты-жөнү',
+    companionFioPlaceholder: 'Аты жана фамилиясы',
+    companionRoleLabel: 'Ким болот',
+    companionRolePlaceholder: 'Мисалы, жолдошу',
 
     errFio: 'Сураныч, аты-жөнүңүздү көрсөтүңүз',
     errAttend: 'Сураныч, жооп вариантын тандаңыз',
@@ -673,9 +690,11 @@ class Component extends DCLogic {
     loading: false,
     row: null,
     table: null,
+    hasCompanion: false,
+    p2: '', relation: '',
     error: '',
     fio: '',
-    fioVal: '', wasAttending: null,
+    fioVal: '', p2Val: '', relVal: '', wasAttending: null,
   };
 
   getLang() {
@@ -700,9 +719,19 @@ class Component extends DCLogic {
           if (data && data.status === 'success' && Array.isArray(data.data)) {
             const d = data.data;
             const fio = (d[1] || '').trim();
+            const companionFio = (d[4] || '').trim();
+            const companionRole = (d[5] || '').trim();
             const table = d[6];
             const patch = {};
             if (fio) patch.fio = fio;
+            // Only surface the companion fields when the sheet already has
+            // one filled in for this guest — otherwise no one gets to add
+            // a plus-one from the form itself anymore.
+            if (companionFio) {
+              patch.hasCompanion = true;
+              patch.p2 = companionFio;
+              patch.relation = companionRole;
+            }
             if (table !== undefined && table !== null && table !== '') patch.table = table;
             if (Object.keys(patch).length) this.setState(patch);
           }
@@ -747,6 +776,9 @@ class Component extends DCLogic {
     const guests = [];
     if (this.state.submitted && yes) {
       guests.push({ name: this.state.fioVal, role: L.invitedGuestRole });
+      if (this.state.p2Val) {
+        guests.push({ name: this.state.p2Val, role: this.state.relVal || L.companionRoleLabel });
+      }
     }
 
     return {
@@ -792,12 +824,17 @@ class Component extends DCLogic {
       attendQuestion: L.attendQuestion,
       yesLabel: L.yesLabel,
       noLabel: L.noLabel,
+      companionFioLabel: L.companionFioLabel,
+      companionFioPlaceholder: L.companionFioPlaceholder,
+      companionRoleLabel: L.companionRoleLabel,
+      companionRolePlaceholder: L.companionRolePlaceholder,
       confirmedGuestsLabel: L.confirmedGuestsLabel,
       editAnswerLabel: L.editAnswerLabel,
 
       // form state
       hasTable: this.state.table !== null && this.state.table !== undefined && this.state.table !== '',
       table: this.state.table,
+      hasCompanion: this.state.hasCompanion,
       notSubmitted: !this.state.submitted,
       submitted: this.state.submitted,
       yesStyle, noStyle, submitStyle, submitLabel,
@@ -806,6 +843,10 @@ class Component extends DCLogic {
 
       fio: this.state.fio,
       setFio: (e) => this.setState({ fio: e.target.value, error: '' }),
+      p2: this.state.p2,
+      relation: this.state.relation,
+      setP2: (e) => this.setState({ p2: e.target.value, error: '' }),
+      setRelation: (e) => this.setState({ relation: e.target.value }),
 
       chooseYes: () => this.setState({ attending: 'yes', error: '' }),
       chooseNo:  () => this.setState({ attending: 'no', error: '' }),
@@ -830,13 +871,20 @@ class Component extends DCLogic {
 
     const isAttending = this.state.attending === 'yes' ? L.isAttendingYes : L.isAttendingNo;
 
+    // The companion fields only ever appear when the sheet already had one
+    // filled in for this ?row=N guest — if it's been cleared out since,
+    // don't send a blank phantom companion.
+    const companionFio = this.state.hasCompanion ? (this.state.p2 || '').trim() : '';
+    const companionRole = this.state.hasCompanion ? (this.state.relation || '').trim() : '';
+    const hasCompanion = !!companionFio;
+
     const payload = {
       guest_group: 'for_family',
       fio: fio,
       is_attending: isAttending,
-      has_companion: false,
-      companion_fio: '',
-      companion_role: '',
+      has_companion: hasCompanion,
+      companion_fio: companionFio,
+      companion_role: companionRole,
     };
 
     // A personalized ?row=N link updates that row in the "Родственники"
@@ -859,7 +907,8 @@ class Component extends DCLogic {
         if (data && data.status === 'success') {
           this.setState({
             loading: false, submitted: true, error: '',
-            fioVal: fio, wasAttending: this.state.attending,
+            fioVal: fio, p2Val: companionFio, relVal: companionRole,
+            wasAttending: this.state.attending,
           });
         } else {
           this.setState({ loading: false, error: L.errNetwork });
