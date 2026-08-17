@@ -492,12 +492,13 @@
           </div>
         </div>
 
-        <sc-if value="{{ hasCompanion }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ showCompanionQuestion }}" hint-placeholder-val="{{ false }}">
         <div style="margin-top: 24px; padding-top: 22px; border-top: 1px solid #efe8da;">
-          <label style="display: block; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: #8c8377; margin-bottom: 9px;">{{ companionFioLabel }}</label>
-          <input type="text" placeholder="{{ companionFioPlaceholder }}" value="{{ p2 }}" onchange="{{ setP2 }}" style="width: 100%; padding: 14px 15px; border: 1px solid #e3dccf; border-radius: 11px; background: #fff; font-family: 'Jost', sans-serif; font-size: 16px; color: #3d362e; outline: none;" style-focus="border-color: var(--accent, #b08d57);">
-          <label style="display: block; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: #8c8377; margin: 18px 0 9px;">{{ companionRoleLabel }}</label>
-          <input type="text" placeholder="{{ companionRolePlaceholder }}" value="{{ relation }}" onchange="{{ setRelation }}" style="width: 100%; padding: 14px 15px; border: 1px solid #e3dccf; border-radius: 11px; background: #fff; font-family: 'Jost', sans-serif; font-size: 16px; color: #3d362e; outline: none;" style-focus="border-color: var(--accent, #b08d57);">
+          <div style="font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; color: #8c8377; margin-bottom: 11px;">{{ companionQuestion }}</div>
+          <div style="display: flex; gap: 11px;">
+            <button type="button" onclick="{{ chooseWithCompanion }}" style="{{ companionYesStyle }}">{{ companionYesLabel }}</button>
+            <button type="button" onclick="{{ chooseAlone }}" style="{{ companionNoStyle }}">{{ companionNoLabel }}</button>
+          </div>
         </div>
         </sc-if>
 
@@ -557,8 +558,8 @@ const LANG = {
     dateLabel: '4 сентября 2026 · 16:30',
     cityLabel: 'Центр отдыха «Ала-Тоо», Бишкек',
 
-    invitGreeting: 'Дорогие родные и близкие!',
-    invitP1: 'С большой радостью приглашаем вас разделить с нами счастливое событие — свадьбу наших детей!',
+    invitGreeting: 'Дорогие гости!',
+    invitP1: 'С большой радостью приглашаем вас разделить с нами счастливое событие — свадьбу наших детей Сейтека и Чолпоная!',
     invitP2: 'Будем искренне рады видеть вас в этот особенный для нашей семьи день и разделить вместе радость торжества.',
     invitSignoff: 'С уважением,',
     invitParents: 'Улугбек и Бермет Бегалиевы',
@@ -596,13 +597,14 @@ const LANG = {
     noLabel: 'К сожалению, нет',
     isAttendingYes: 'Да, приду с радостью',
     isAttendingNo: 'К сожалению, нет',
-    companionFioLabel: 'ФИО спутника',
-    companionFioPlaceholder: 'Имя и фамилия',
-    companionRoleLabel: 'Кем приходится',
-    companionRolePlaceholder: 'Например, супруг(а)',
+    companionQuestionWithRole: '{name} ({role}) будет с вами?',
+    companionQuestionNoRole: '{name} будет с вами?',
+    companionYesLabel: 'Да, вместе',
+    companionNoLabel: 'Нет, без спутника',
 
     errFio: 'Пожалуйста, укажите Ваше ФИО',
     errAttend: 'Пожалуйста, выберите вариант ответа',
+    errCompanionChoice: 'Пожалуйста, укажите, будете ли вы со спутником',
     errNetwork: 'Не удалось отправить ответ. Пожалуйста, попробуйте позже.',
 
     submitLabelDefault: 'Отправить ответ',
@@ -614,6 +616,7 @@ const LANG = {
     thankSubNo: 'Будем скучать по Вам в этот день. Спасибо, что нашли время ответить.',
     confirmedGuestsLabel: 'Подтверждённые гости',
     invitedGuestRole: 'Приглашённый гость',
+    companionGuestRole: 'Спутник',
     editAnswerLabel: 'Изменить ответ',
   },
   ky: {
@@ -621,10 +624,10 @@ const LANG = {
     dateLabel: '2026-ж. 4-сентябры · 16:30',
     cityLabel: '«Ала-Тоо» эс алуу борбору, Бишкек',
 
-    invitGreeting: 'Урматтуу туугандар жана жакындар!',
-    invitP1: 'Чоң кубаныч менен силерди биз менен бирге бактылуу окуяны — балдарыбыздын үйлөнүү тоюн белгилөөгө чакырабыз!',
-    invitP2: 'Үй-бүлөбүз үчүн бул өзгөчө күндө силерди көрүүгө чын жүрөктөн кубанычтабыз жана той-майрамдын кубанычын бирге бөлүшөбүз.',
-    invitSignoff: 'Урмат менен,',
+    invitGreeting: 'Ардактуу меймандар жана туугандар!',
+    invitP1: 'Сиздерди балдарыбыз Сейтек менен Чолпонайдын үйлөнүү тоюна келип, кубанычыбызды биз менен бирге бөлүшүүгө чын жүрөктөн чакырабыз!',
+    invitP2: 'Бул өзгөчө күнү сиздерди арабыздан көрүү биз үчүн чоң бакыт.',
+    invitSignoff: 'урматтоо менен,',
     invitParents: 'Улугбек жана Бермет Бегалиевдер',
 
     countdownLabel: 'Тойго чейин аз калды',
@@ -660,13 +663,14 @@ const LANG = {
     noLabel: 'Тилекке каршы, жок',
     isAttendingYes: 'Ооба, кубаныч менен келем',
     isAttendingNo: 'Тилекке каршы, жок',
-    companionFioLabel: 'Коштоочунун аты-жөнү',
-    companionFioPlaceholder: 'Аты жана фамилиясы',
-    companionRoleLabel: 'Ким болот',
-    companionRolePlaceholder: 'Мисалы, жолдошу',
+    companionQuestionWithRole: '{name} ({role}) менен келесизби?',
+    companionQuestionNoRole: '{name} менен келесизби?',
+    companionYesLabel: 'Ооба, чогуу',
+    companionNoLabel: 'Жок, жалгыз',
 
     errFio: 'Сураныч, аты-жөнүңүздү көрсөтүңүз',
     errAttend: 'Сураныч, жооп вариантын тандаңыз',
+    errCompanionChoice: 'Сураныч, коштоочу менен келериңизди белгилеңиз',
     errNetwork: 'Жоопту жөнөтүү мүмкүн болгон жок. Сураныч, кийинчерээк аракет кылыңыз.',
 
     submitLabelDefault: 'Жоопту жөнөтүү',
@@ -678,6 +682,7 @@ const LANG = {
     thankSubNo: 'Бул күнү сизди сагынабыз. Убакыт таап жооп бергениңиз үчүн рахмат.',
     confirmedGuestsLabel: 'Ырасталган коноктор',
     invitedGuestRole: 'Чакырылган конок',
+    companionGuestRole: 'Коштоочу',
     editAnswerLabel: 'Жоопту өзгөртүү',
   },
 };
@@ -691,6 +696,7 @@ class Component extends DCLogic {
     row: null,
     table: null,
     hasCompanion: false,
+    bringingCompanion: null,   // null | 'yes' | 'no'
     p2: '', relation: '',
     error: '',
     fio: '',
@@ -768,6 +774,12 @@ class Component extends DCLogic {
     const yesStyle = base + (this.state.attending === 'yes' ? on : off);
     const noStyle  = base + (this.state.attending === 'no'  ? on : off);
 
+    const companionYesStyle = base + (this.state.bringingCompanion === 'yes' ? on : off);
+    const companionNoStyle  = base + (this.state.bringingCompanion === 'no'  ? on : off);
+    const companionQuestion = this.state.relation
+      ? L.companionQuestionWithRole.replace('{name}', this.state.p2).replace('{role}', this.state.relation)
+      : L.companionQuestionNoRole.replace('{name}', this.state.p2);
+
     const submitStyle = "width:100%; margin-top:24px; padding:16px; border:none; border-radius:12px; background:var(--accent,#b08d57); color:#fff; font-family:'Jost',sans-serif; font-size:15px; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:opacity .2s;" + (this.state.loading ? " opacity:0.65; cursor:not-allowed; pointer-events:none;" : "");
     const submitLabel = this.state.loading ? L.submitLabelLoading : L.submitLabelDefault;
 
@@ -777,7 +789,7 @@ class Component extends DCLogic {
     if (this.state.submitted && yes) {
       guests.push({ name: this.state.fioVal, role: L.invitedGuestRole });
       if (this.state.p2Val) {
-        guests.push({ name: this.state.p2Val, role: this.state.relVal || L.companionRoleLabel });
+        guests.push({ name: this.state.p2Val, role: this.state.relVal || L.companionGuestRole });
       }
     }
 
@@ -824,32 +836,29 @@ class Component extends DCLogic {
       attendQuestion: L.attendQuestion,
       yesLabel: L.yesLabel,
       noLabel: L.noLabel,
-      companionFioLabel: L.companionFioLabel,
-      companionFioPlaceholder: L.companionFioPlaceholder,
-      companionRoleLabel: L.companionRoleLabel,
-      companionRolePlaceholder: L.companionRolePlaceholder,
+      companionQuestion,
+      companionYesLabel: L.companionYesLabel,
+      companionNoLabel: L.companionNoLabel,
       confirmedGuestsLabel: L.confirmedGuestsLabel,
       editAnswerLabel: L.editAnswerLabel,
 
       // form state
       hasTable: this.state.table !== null && this.state.table !== undefined && this.state.table !== '',
       table: this.state.table,
-      hasCompanion: this.state.hasCompanion,
+      showCompanionQuestion: this.state.hasCompanion,
       notSubmitted: !this.state.submitted,
       submitted: this.state.submitted,
-      yesStyle, noStyle, submitStyle, submitLabel,
+      yesStyle, noStyle, companionYesStyle, companionNoStyle, submitStyle, submitLabel,
       hasError: !!this.state.error,
       error: this.state.error,
 
       fio: this.state.fio,
       setFio: (e) => this.setState({ fio: e.target.value, error: '' }),
-      p2: this.state.p2,
-      relation: this.state.relation,
-      setP2: (e) => this.setState({ p2: e.target.value, error: '' }),
-      setRelation: (e) => this.setState({ relation: e.target.value }),
 
       chooseYes: () => this.setState({ attending: 'yes', error: '' }),
       chooseNo:  () => this.setState({ attending: 'no', error: '' }),
+      chooseWithCompanion: () => this.setState({ bringingCompanion: 'yes', error: '' }),
+      chooseAlone: () => this.setState({ bringingCompanion: 'no', error: '' }),
       submit: this.submit,
       editAnswer: () => this.setState({ submitted: false, error: '' }),
 
@@ -868,14 +877,16 @@ class Component extends DCLogic {
     const fio = (this.state.fio || '').trim();
     if (!fio) { this.setState({ error: L.errFio }); return; }
     if (this.state.attending == null) { this.setState({ error: L.errAttend }); return; }
+    const askingCompanion = this.state.hasCompanion && this.state.attending === 'yes';
+    if (askingCompanion && this.state.bringingCompanion == null) { this.setState({ error: L.errCompanionChoice }); return; }
 
     const isAttending = this.state.attending === 'yes' ? L.isAttendingYes : L.isAttendingNo;
 
-    // The companion fields only ever appear when the sheet already had one
-    // filled in for this ?row=N guest — if it's been cleared out since,
-    // don't send a blank phantom companion.
-    const companionFio = this.state.hasCompanion ? (this.state.p2 || '').trim() : '';
-    const companionRole = this.state.hasCompanion ? (this.state.relation || '').trim() : '';
+    // The companion is only ever known from the ?row=N sheet data, and only
+    // sent when the guest actively confirmed they're bringing them.
+    const bringingCompanion = askingCompanion && this.state.bringingCompanion === 'yes';
+    const companionFio = bringingCompanion ? (this.state.p2 || '').trim() : '';
+    const companionRole = bringingCompanion ? (this.state.relation || '').trim() : '';
     const hasCompanion = !!companionFio;
 
     const payload = {
